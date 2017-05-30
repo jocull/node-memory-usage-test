@@ -22,7 +22,7 @@ let lastMs = Date.now();
 const result =
   _.chain(_.range(0, ITERATIONS))
     .tap(() => console.log('Mapping!'))
-    .map(i => {
+    .reduce((acc, i) => {
       if (i % 10000 === 0) {
         let now = Date.now();
         let mem = process.memoryUsage();
@@ -37,15 +37,13 @@ const result =
 
       const text = makeText();
       const words = text.match(/\w+/g);
-      return {
+      const val = {
         text,
         words: () => words,
         lowerWords: () => words.map(x => x.toLowerCase()),
         count: () => words.length,
       };
-    })
-    .tap(() => console.log('Reducing!'))
-    .reduce((acc, val) => {
+
       for (let word of val.words()) {
         if (word in acc) {
           acc[word]++;
@@ -55,12 +53,11 @@ const result =
       }
       return acc;
     }, {})
-    .tap(() => console.log('Re-mapping!'))
+    .tap(() => console.log('Sorting!'))
     .map((val, key) => ({
       word: key,
       count: val,
     }))
-    .tap(() => console.log('Sorting!'))
     .sortBy(x => x.count)
     .tap(() => console.log('Reversing!'))
     .reverse()
