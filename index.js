@@ -7,9 +7,9 @@ const wordGenWorker = workerFarm(require.resolve('./word-gen'));
 const ITERATIONS = 500000;
 let lastMs = Date.now();
 
-let wordGenPromises = _.range(0, ITERATIONS)
-  .map(i => {
-    return new Promise((resolve, reject) => {
+function* wordGenPromises() {
+  for (let i = 0; i < ITERATIONS; i++) {
+    yield new Promise((resolve, reject) => {
       wordGenWorker(null, (err, ok) => {
         if (i % 10000 === 0) {
           let now = Date.now();
@@ -30,9 +30,10 @@ let wordGenPromises = _.range(0, ITERATIONS)
         }
       });
     });
-  });
+  }
+}
 
-Promise.reduce(wordGenPromises, (acc, text) => {
+Promise.reduce(wordGenPromises(), (acc, text) => {
   const words = text.match(/\w+/g);
   const val = {
     text,
