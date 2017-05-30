@@ -1,0 +1,20 @@
+{
+  "name": "memory-usage",
+  "version": "0.0.1",
+  "description": "Pump up the jam",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --max_old_space_size=6144 index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James O'Cull",
+  "license": "ISC",
+  "dependencies": {
+    "faker": "^4.1.0",
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "@types/faker": "^4.1.0",
+    "@types/lodash": "^4.14.64"
+  }
+}
