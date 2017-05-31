@@ -1,5 +1,6 @@
 Why?
 =======
+![](http://1.bp.blogspot.com/-rdcDy8HhAkY/UHqQSpM236I/AAAAAAAAJe4/J4Zc4iyfW_Q/s1600/Can't+stop+now+someone+is+wrong+on+the+internet.jpg)
 
 Someone said that [Node.js was too slow and had a low memory limit so you should really use Go](https://hackernoon.com/i-wrote-some-golang-and-it-felt-great-3c3367a67db5). I felt like there must have been something fundamentally wrong with his implementation, so I wrote this sample to show that you can really crunch some stuff in Node.
 
