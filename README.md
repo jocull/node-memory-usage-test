@@ -40,6 +40,6 @@ Is Go(lang) faster? Sure it is! It's probably 3 times faster due to the static n
 
 But it's highly unlikely that Golang is going to be 6250% faster unless ***you're doing something very wrong***.
 
-1. Memory **can* leak in any language
+1. Memory **can** leak in any language
 2. Bad data structures and excess allocations **are going to hurt performance** in any language
 3. Careless functional programming **will be slower** in any language. Imperitive programming is generally faster, but it has its own set of tradeoffs (scope, mutability). You have to understand your tools.
