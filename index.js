@@ -2,55 +2,57 @@ const _ = require('lodash');
 const faker = require('faker');
 const Promise = require('bluebird');
 const workerFarm = require('worker-farm');
-const wordGenWorker = workerFarm(require.resolve('./word-gen'));
+const wordWorkers = workerFarm({ autostart: true }, require.resolve('./word-gen'));
+const wordGenWorker = Promise.promisify(wordWorkers);
 
-const ITERATIONS = 500000;
+const ITERATIONS = 50;
 let lastMs = Date.now();
 
-function* wordGenPromises() {
-  for (let i = 0; i < ITERATIONS; i++) {
-    yield new Promise((resolve, reject) => {
-      wordGenWorker(null, (err, ok) => {
-        if (i % 10000 === 0) {
-          let now = Date.now();
-          let mem = process.memoryUsage();
-          console.log();
-          console.log('Iteration', i.toLocaleString());
-          console.log('Resident set', (mem.rss / 1024 / 1024).toLocaleString(), 'MB');
-          console.log('Heap usage', (mem.heapUsed / 1024 / 1024).toLocaleString(), 'MB');
-          console.log('Heap total', (mem.heapTotal / 1024 / 1024).toLocaleString(), 'MB');
-          console.log('Time to chunk', (now - lastMs).toLocaleString(), 'ms');
-          lastMs = now;
-        }
-
-        if (err) {
-          reject(err)
-        } else {
-          resolve(ok);
-        }
+Promise.map(_.times(ITERATIONS), i => {
+    console.log('map', i);
+    return wordGenWorker(null)
+      .then(text => {
+        console.log('map => done', i);
+        return {
+          i,
+          text,
+        };
       });
-    });
-  }
-}
+  })
+  .reduce((acc, r) => {
+      const i = r.i;
+      const text = r.text;
 
-Promise.reduce(wordGenPromises(), (acc, text) => {
-  const words = text.match(/\w+/g);
-  const val = {
-    text,
-    words: () => words,
-    lowerWords: () => words.map(x => x.toLowerCase()),
-    count: () => words.length,
-  };
+      console.log('reduce', i);
+      if (i % 10000 === 0) {
+        let now = Date.now();
+        let mem = process.memoryUsage();
+        console.log();
+        console.log('Iteration', i.toLocaleString());
+        console.log('Resident set', (mem.rss / 1024 / 1024).toLocaleString(), 'MB');
+        console.log('Heap usage', (mem.heapUsed / 1024 / 1024).toLocaleString(), 'MB');
+        console.log('Heap total', (mem.heapTotal / 1024 / 1024).toLocaleString(), 'MB');
+        console.log('Time to chunk', (now - lastMs).toLocaleString(), 'ms');
+        lastMs = now;
+      }
 
-  for (let word of val.words()) {
-    if (word in acc) {
-      acc[word]++;
-    } else {
-      acc[word] = 1;
-    }
-  }
-  return acc;
-}, {})
+      const words = text.match(/\w+/g);
+      const val = {
+        text,
+        words: () => words,
+        lowerWords: () => words.map(x => x.toLowerCase()),
+        count: () => words.length,
+      };
+
+      for (let word of val.words()) {
+        if (word in acc) {
+          acc[word]++;
+        } else {
+          acc[word] = 1;
+        }
+      }
+      return acc;
+  }, {})
   .then(wordAcc => {
     return _.chain(wordAcc)
       .map((val, key) => ({
@@ -74,5 +76,5 @@ Promise.reduce(wordGenPromises(), (acc, text) => {
   })
   .catch(err => console.error(err)) // Move to end and teardown
   .then(() => {
-    workerFarm.end(wordGenWorker);
+    workerFarm.end(wordWorkers);
   });

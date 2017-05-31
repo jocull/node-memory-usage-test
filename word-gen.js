@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const faker = require('faker');
 
-const paras = 20;
+const paras = 5000;
 const textFunctions = [
     () => faker.lorem.paragraphs(paras),
     () => _.times(paras * 10).map(faker.company.bs).join(' '),
