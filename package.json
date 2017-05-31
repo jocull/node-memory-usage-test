@@ -1,10 +1,10 @@
 {
-  "name": "memory-usage",
+  "name": "node-memory-usage-test",
   "version": "0.0.1",
-  "description": "Pump up the jam",
-  "main": "index.js",
+  "description": "Testing the Node.js memory limit claims",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node --max_old_space_size=6144 index.js",
+    "start": "node --max_old_space_size=6144 ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "James O'Cull",
