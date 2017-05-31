@@ -5,10 +5,11 @@ const workerFarm = require('worker-farm');
 const wordWorkers = workerFarm({ autostart: true }, require.resolve('./word-gen'));
 const wordGenWorker = Promise.promisify(wordWorkers);
 
-const ITERATIONS = 50;
+const ITERATIONS = 1000;
 let lastMs = Date.now();
 
-Promise.map(_.times(ITERATIONS), i => {
+Promise.reduce(
+  _.map(_.times(ITERATIONS), i => {
     console.log('map', i);
     return wordGenWorker(null)
       .then(text => {
@@ -18,8 +19,8 @@ Promise.map(_.times(ITERATIONS), i => {
           text,
         };
       });
-  })
-  .reduce((acc, r) => {
+  }),
+  (acc, r) => {
       const i = r.i;
       const text = r.text;
 
@@ -52,7 +53,8 @@ Promise.map(_.times(ITERATIONS), i => {
         }
       }
       return acc;
-  }, {})
+  },
+  {})
   .then(wordAcc => {
     return _.chain(wordAcc)
       .map((val, key) => ({
@@ -74,7 +76,6 @@ Promise.map(_.times(ITERATIONS), i => {
 
     console.log(result);
   })
-  .catch(err => console.error(err)) // Move to end and teardown
-  .then(() => {
+  .finally(() => {
     workerFarm.end(wordWorkers);
   });
