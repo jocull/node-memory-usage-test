@@ -10,10 +10,10 @@ let lastMs = Date.now();
 
 Promise.reduce(
   _.map(_.times(ITERATIONS), i => {
-    console.log('map', i);
+    // console.log('map', i);
     return wordGenWorker(null)
       .then(text => {
-        console.log('map => done', i);
+        // console.log('map => done', i);
         return {
           i,
           text,
@@ -24,7 +24,7 @@ Promise.reduce(
       const i = r.i;
       const text = r.text;
 
-      console.log('reduce', i);
+      // console.log('reduce', i);
       if (i % 10000 === 0) {
         let now = Date.now();
         let mem = process.memoryUsage();
