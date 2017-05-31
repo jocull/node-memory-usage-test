@@ -1,3 +1,5 @@
+'use strict'
+
 const _ = require('lodash');
 const faker = require('faker');
 const Promise = require('bluebird');
