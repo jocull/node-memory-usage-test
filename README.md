@@ -27,7 +27,7 @@ What I found
 ===============
 
 - Node processes just fine in parallel. I used the `worker-farm` module and child processes here for heavy lifting.
-- There is no practical memory limit I could find. Adjust `--max_old_space_size=[____MB]` in `package.json` to try it yourself. Adjust `const ITERATIONS` in the progaram and rerun it to push the limit. Consider generating more garbage (extra objects, arrays, etc...) to push it further.
+- There is no practical memory limit I could find. Adjust `--max_old_space_size=[____MB]` in `package.json` to try it yourself. Adjust `const ITERATIONS` in the program and rerun it to push the limit. Consider generating more garbage (extra objects, arrays, etc...) to push it further.
 - No exponential performance degredation seems to happen when "lots of objects" are loaded into memory. This is of course not true when your machine runs out of memory and starts swapping, but that happens everywhere... The garbage collector seems to have nothing to do with it.
 - My implementation of this changed a lot over time as I went for more performance and efficiency via pipelining, but by all means please generate more objects and try it yourself. There's plenty of data being generated that you can mangle it into new arrays, objects, functions, anything you need.
 - Support for async/await and generators is lackluster even today (May 2017) - even with transpilers. I experimented with them and found either missing support, or complicated compilation processes hidden under flags, polyfills, and magic tricks. Promises are still the best and most stable way to go in my mind.
